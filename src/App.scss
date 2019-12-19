@@ -1,0 +1,14 @@
+body,
+html,
+#root {
+  min-height: 100vh;
+  height: auto;
+}
+#root {
+  background-color: #343a40;
+}
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}

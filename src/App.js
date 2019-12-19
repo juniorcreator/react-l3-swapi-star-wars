@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import User from "./components/User/User";
+import ErrorRequest from "./components/ErrorRequest/ErrorRequest";
+import Loader from "./components/Loader/Loader";
+import { getUsers } from "./service/api";
+import "./App.scss";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {
+    isLoading: true,
+    errorRequest: false,
+    users: null
+  };
+  componentDidMount() {
+    getUsers()
+      .then(users => {
+        this.setState({ users, isLoading: false });
+        console.log(this.state);
+      })
+      .catch(() => {
+        this.setState({ errorRequest: true });
+      });
+  }
+  renderUsers = () => {
+    let { users } = this.state;
+    if (users) {
+      return users.map((user, index) => {
+        return <User key={index} user={user} />;
+      });
+    }
+  };
+  handleCloseErrorRequest = () => {
+    this.setState({ errorRequest: false });
+  };
+  render() {
+    const { isLoading, errorRequest, users } = this.state;
+    return (
+      <React.Fragment>
+        <div className="container">
+          {errorRequest && (
+            <ErrorRequest
+              handleCloseErrorRequest={this.handleCloseErrorRequest}
+            />
+          )}
+          {isLoading ? <Loader /> : this.renderUsers()}
+        </div>
+      </React.Fragment>
+    );
+  }
 }
 
 export default App;
